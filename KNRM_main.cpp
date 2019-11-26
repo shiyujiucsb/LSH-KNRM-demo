@@ -10,8 +10,12 @@ int main() {
   constexpr int VOCAB_SIZE = 10000;
 
   srand(nn4ir::SEED);
-  const std::vector<int> query(QUERY_LEN, rand() % VOCAB_SIZE);
-  const std::vector<int> doc(DOC_LEN, rand() % VOCAB_SIZE);
+  std::vector<int> query(QUERY_LEN);
+  std::generate(query.begin(), query.end(), [](){
+		                 return rand() % VOCAB_SIZE; });
+  std::vector<int> doc(DOC_LEN);
+  std::generate(doc.begin(), doc.end(), [](){
+		                 return rand() % VOCAB_SIZE; });
 
   std::vector<VectorXd> embeddings = nn4ir::InitRandomVectors(VOCAB_SIZE);
 
