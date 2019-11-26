@@ -1,44 +1,6 @@
-/*
- * Implementation of KNRM ranking model.
-*/
-
-#include <bitset>
-#include <random>
-#include <chrono>
-#include <cmath>
-#include <iostream>
-#include <fstream>
-#include <iomanip>
-#include <string>
-#include <memory>
-#include <unordered_map>
-#include <unordered_set>
-#include <queue>
-#include <limits>
-#include <algorithm>
-#include <thread>
-#include <cstdint>
-
-#include "Eigen/Dense"
-
-using RMatrixXd =
-      Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>;
-using VectorXd = Eigen::Matrix<double, 1, Eigen::Dynamic, Eigen::RowMajor>;
-
-// Number of bits in LSH fingerprint.
-constexpr int N_LSH_BITS = 256;
-using LSHFingerprint = std::bitset<N_LSH_BITS>;
-
-// Embedding dimension.
-constexpr int DIM = 200;
-
-// Number of soft kernels.
-constexpr int N_KERNELS = 10;
+#include "KNRM.h"
 
 namespace nn4ir {
-
-const unsigned SEED =
-               std::chrono::system_clock::now().time_since_epoch().count();
 
 VectorXd Tanh(const VectorXd & input){
     VectorXd voutput = VectorXd::Zero(input.size());
@@ -66,16 +28,13 @@ LSHFingerprint ComputeLSHFingerprint(
     return std::move(result);
 }
 
-/*
- * Initialize LSH random vectors.
- * */
-std::vector<VectorXd> InitLshRandomVectors() {
+std::vector<VectorXd> InitRandomVectors(int n_vectors) {
     std::default_random_engine generator(SEED);
     std::normal_distribution<double> distri(0.0, 1.0);
 
     std::vector<VectorXd> vectors;
-    vectors.reserve(N_LSH_BITS);
-    for (int i = 0; i < N_LSH_BITS; i++) {
+    vectors.reserve(n_vectors);
+    for (int i = 0; i < n_vectors; i++) {
         VectorXd lsh_rand_vec(DIM);
         for (int j = 0; j < DIM; j++) {
             lsh_rand_vec[j] = distri(generator);
@@ -105,7 +64,7 @@ RMatrixXd InitLSHMatrix() {
  * Compute ranking score based on original embeddings.
  * */
 double ComputeRankingScore(
-                const std::unordered_map<int, VectorXd>& id2embedding_mm,
+                const std::vector<VectorXd>& id2embedding_mm,
                 const std::vector<int>& query_term_ids,
                 const std::vector<int>& doc_term_ids,
                 const std::vector<RMatrixXd>& vW1,
@@ -127,8 +86,8 @@ double ComputeRankingScore(
     }
     RMatrixXd mm = RMatrixXd::Constant(nQSize,vW1[0].rows(),0);
     const int iHalfSize = vW1[0].rows()-1;
-    for(const int query_term_id : query_term_ids){
-        const VectorXd& query_term_vec = id2embedding_mm.at(query_term_id);
+    for(int a = 0; a < nQSize; ++a){
+        const VectorXd& query_term_vec = id2embedding_mm.at(query_term_ids[a]);
         for(const int doc_term_id : doc_term_ids){
             const VectorXd& doc_term_vec = id2embedding_mm.at(doc_term_id);
             double simi = query_term_vec.dot(doc_term_vec);
@@ -142,7 +101,7 @@ double ComputeRankingScore(
     }
     double weight_sum = 0.0;
     VectorXd vQWeight = VectorXd::Zero(nQSize); //zi
-    for(a = 0 ; a < nQSize; ++ a){
+    for(a = 0 ; a < nQSize; ++a){
         double cqw = 2.0;
         cqw = exp(vW2(0)); 
         vQWeight(a) = cqw; 
@@ -179,7 +138,7 @@ double ComputeRankingScore(
  * Compute ranking score based on LSH fingerprints.
  * */
 double ComputeRankingScoreFromLSH(
-                const std::unordered_map<int, LSHFingerprint>& id2lsh_mm,
+                const std::vector<LSHFingerprint>& id2lsh_mm,
                 const RMatrixXd& lsh_matrix,
                 const std::vector<int>& query_term_ids,
                 const std::vector<int>& doc_term_ids,
@@ -202,23 +161,21 @@ double ComputeRankingScoreFromLSH(
     }
     RMatrixXd mm = RMatrixXd::Constant(nQSize,vW1[0].rows(),0);
     const int iHalfSize = vW1[0].rows()-1;
-    for(const int query_term_id : query_term_ids){
+    for(int a = 0; a < nQSize; ++a){
         const LSHFingerprint& query_term_vec =
-                  id2lsh_mm.at(query_term_id);
+                  id2lsh_mm.at(query_term_ids[a]);
         VectorXd hamming_count = VectorXd::Zero(N_LSH_BITS + 1);
         for(const int doc_term_id : doc_term_ids){
             const LSHFingerprint& doc_term_vec =
                       id2lsh_mm.at(doc_term_id);
-            for (int i = 0; i < iHalfSize; i++) {
-                const LSHFingerprint x = query_term_vec ^ doc_term_vec;
-                hamming_count[x.count()] += 1;
-            }
+            const LSHFingerprint x = query_term_vec ^ doc_term_vec;
+            hamming_count[x.count()] += 1;
         }
         mm.row(a) += lsh_matrix * hamming_count.transpose();
     }
     double weight_sum = 0.0;
     VectorXd vQWeight = VectorXd::Zero(nQSize); //zi
-    for(a = 0 ; a < nQSize; ++ a){
+    for(a = 0 ; a < nQSize; ++a){
         double cqw = 2.0;
         cqw = exp(vW2(0)); 
         vQWeight(a) = cqw; 
