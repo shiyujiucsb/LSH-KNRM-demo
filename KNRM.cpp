@@ -2,7 +2,7 @@
 
 namespace nn4ir {
 
-VectorXd Tanh(const VectorXd & input){
+VectorXd Tanh(const VectorXd& input){
     VectorXd voutput = VectorXd::Zero(input.size());
     for(int i = 0 ; i < voutput.size(); ++ i){
         double exp_val = exp( - 2.0 * input[i] );
@@ -16,7 +16,7 @@ VectorXd Tanh(const VectorXd & input){
  * */
 LSHFingerprint ComputeLSHFingerprint(
                              const VectorXd & vec,
-                             const std::vector<VectorXd> lsh_random_vectors) {
+                             const std::vector<VectorXd>& lsh_random_vectors) {
     assert(lsh_random_vectors.size() == N_LSH_BITS);
     LSHFingerprint result(0);
     for (const VectorXd& r : lsh_random_vectors) {

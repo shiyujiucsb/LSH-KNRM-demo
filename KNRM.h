@@ -41,14 +41,14 @@ namespace nn4ir {
 const unsigned SEED =
                std::chrono::system_clock::now().time_since_epoch().count();
 
-VectorXd Tanh(const VectorXd & input);
+VectorXd Tanh(const VectorXd& input);
 
 /*
  * Compute LSH fingerprint.
  * */
 LSHFingerprint ComputeLSHFingerprint(
-                             const VectorXd & vec,
-                             const std::vector<VectorXd> lsh_random_vectors);
+                             const VectorXd& vec,
+                             const std::vector<VectorXd>& lsh_random_vectors);
 
 /*
  * Initialize random vectors with length one.
