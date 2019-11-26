@@ -7,7 +7,7 @@ int main() {
 
   constexpr int QUERY_LEN = 3;
   constexpr int DOC_LEN = 10000;
-  constexpr int VOCAB_SIZE = 10000;
+  constexpr int VOCAB_SIZE = 100000;
 
   srand(nn4ir::SEED);
   std::vector<int> query(QUERY_LEN);

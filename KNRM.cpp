@@ -4,11 +4,11 @@ namespace nn4ir {
 
 VectorXd Tanh(const VectorXd& input){
     VectorXd voutput = VectorXd::Zero(input.size());
-    for(int i = 0 ; i < voutput.size(); ++ i){
-        double exp_val = exp( - 2.0 * input[i] );
-        voutput[i] = ( 1.0 - exp_val) / ( 1.0 + exp_val);
+    for(int i = 0 ; i < voutput.size(); ++i){
+        const double exp_val = exp( - 2.0 * input[i] );
+        voutput[i] = (1.0 - exp_val) / (1.0 + exp_val);
     }
-    return std::move(voutput);
+    return voutput;
 }
 
 /*
@@ -25,7 +25,7 @@ LSHFingerprint ComputeLSHFingerprint(
         }
         result <<= 1;
     }
-    return std::move(result);
+    return result;
 }
 
 std::vector<VectorXd> InitRandomVectors(int n_vectors) {
@@ -42,7 +42,7 @@ std::vector<VectorXd> InitRandomVectors(int n_vectors) {
         vectors.emplace_back(lsh_rand_vec / lsh_rand_vec.norm());
     }
 
-    return std::move(vectors);
+    return vectors;
 }
 
 RMatrixXd InitLSHMatrix() {

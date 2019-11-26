@@ -31,7 +31,7 @@ constexpr int N_LSH_BITS = 256;
 using LSHFingerprint = std::bitset<N_LSH_BITS>;
 
 // Embedding dimension.
-constexpr int DIM = 200;
+constexpr int DIM = 300;
 
 // Number of soft kernels.
 constexpr int N_KERNELS = 30;
