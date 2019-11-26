@@ -2,6 +2,7 @@
  * Implementation of KNRM ranking model.
 */
 
+#include <bitset>
 #include <random>
 #include <chrono>
 #include <cmath>
@@ -24,7 +25,17 @@ using RMatrixXd =
       Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>;
 using VectorXd = Eigen::Matrix<double, 1, Eigen::Dynamic, Eigen::RowMajor>;
 
+// Number of bits in LSH fingerprint.
+constexpr int N_LSH_BITS = 256;
+using LSHFingerprint = std::bitset<N_LSH_BITS>;
+
+// Embedding dimension.
+constexpr int DIM = 200;
+
 namespace nn4ir {
+
+const unsigned SEED =
+               std::chrono::system_clock::now().time_since_epoch().count();
 
 VectorXd Tanh(const VectorXd & input){
     VectorXd voutput = VectorXd::Zero(input.size());
@@ -33,6 +44,43 @@ VectorXd Tanh(const VectorXd & input){
         voutput[i] = ( 1.0 - exp_val) / ( 1.0 + exp_val);
     }
     return std::move(voutput);
+}
+
+/*
+ * Compute LSH fingerprint.
+ * */
+LSHFingerprint ComputeLSHFingerprint(
+                             const VectorXd & vec,
+                             const std::vector<VectorXd> lsh_random_vectors) {
+    assert(lsh_random_vectors.size() == N_LSH_BITS);
+    LSHFingerprint result(0);
+    for (const VectorXd& r : lsh_random_vectors) {
+        if (vec.dot(r) > 0) {
+          result.set(0);
+        }
+        result <<= 1;
+    }
+    return std::move(result);
+}
+
+/*
+ * Initialize LSH random vectors.
+ * */
+std::vector<VectorXd> InitLshRandomVectors() {
+    std::default_random_engine generator(SEED);
+    std::normal_distribution<double> distri(0.0, 1.0);
+
+    std::vector<VectorXd> vectors;
+    vectors.reserve(N_LSH_BITS);
+    for (int i = 0; i < N_LSH_BITS; i++) {
+        VectorXd lsh_rand_vec(DIM);
+        for (int j = 0; j < DIM; j++) {
+            lsh_rand_vec[j] = distri(generator);
+        }
+        vectors.emplace_back(lsh_rand_vec / lsh_rand_vec.norm());
+    }
+
+    return std::move(vectors);
 }
 
 /*
