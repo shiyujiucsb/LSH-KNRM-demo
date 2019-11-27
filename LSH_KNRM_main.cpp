@@ -12,7 +12,7 @@ int main() {
   std::vector<int> query = nn4ir::InitRandomQuery();
   std::vector<int> doc = nn4ir::InitRandomDocument();
 
-  // Embedding is randomely generated also.
+  // Embedding is randomly generated also.
   std::vector<VectorXd> embeddings = nn4ir::InitRandomVectors(VOCAB_SIZE);
 
   /*

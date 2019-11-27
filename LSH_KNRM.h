@@ -5,20 +5,18 @@
 #ifndef _LSH_KNRM_H
 #define _LSH_KNRM_H
 
+#include <algorithm>
 #include <bitset>
-#include <random>
 #include <chrono>
 #include <cmath>
-#include <iostream>
-#include <fstream>
+#include <cstdint>
 #include <iomanip>
-#include <string>
+#include <iostream>
+#include <limits>
 #include <memory>
 #include <queue>
-#include <limits>
-#include <algorithm>
-#include <thread>
-#include <cstdint>
+#include <random>
+#include <string>
 
 #include "Eigen/Dense"
 
@@ -34,14 +32,13 @@ using LSHFingerprint = std::bitset<N_LSH_BITS>;
 
 // Embedding dimension.
 constexpr int DIM = 300;
-
 // Number of soft kernels.
 constexpr int N_KERNELS = 30;
-
+// Number of terms in the query.
 constexpr int QUERY_LEN = 3;
-
+// Number of terms in the document.
 constexpr int DOC_LEN = 10000;
-
+// Vocabulary size.
 constexpr int VOCAB_SIZE = 100000;
 
 
@@ -71,6 +68,9 @@ inline std::vector<VectorXd> InitLSHBaseVectors() {
   return InitRandomVectors(N_LSH_BITS);
 }
 
+/*
+ * Initialize query with random term IDs.
+ * */
 inline std::vector<int> InitRandomQuery() {
   srand(nn4ir::SEED);
   std::vector<int> query(QUERY_LEN);
@@ -81,6 +81,9 @@ inline std::vector<int> InitRandomQuery() {
   return query;
 }
 
+/*
+ * Initialize document with random term IDs.
+ * */
 inline std::vector<int> InitRandomDocument() {
   srand(nn4ir::SEED);
   std::vector<int> doc(DOC_LEN);

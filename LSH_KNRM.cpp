@@ -11,9 +11,6 @@ VectorXd Tanh(const VectorXd& input){
   return voutput;
 }
 
-/*
- * Compute LSH fingerprint.
- */
 LSHFingerprint ComputeLSHFingerprint(
     const VectorXd& vec,
     const std::vector<VectorXd>& lsh_base_vectors) {
@@ -60,9 +57,6 @@ RMatrixXd InitLSHMatrix() {
   return std::move(M);
 }
 
-/*
- * Compute ranking score based on original embeddings.
- * */
 double ComputeRankingScore(const std::vector<VectorXd>& id2embedding_mm,
                            const std::vector<int>& query_term_ids,
                            const std::vector<int>& doc_term_ids) {
@@ -162,9 +156,6 @@ double ComputeRankingScore(const std::vector<VectorXd>& id2embedding_mm,
   return score;
 }
 
-/*
- * Compute ranking score based on LSH fingerprints.
- * */
 double ComputeRankingScoreFromLSH(const std::vector<LSHFingerprint>& id2lsh_mm,
                                   const std::vector<int>& query_term_ids,
                                   const std::vector<int>& doc_term_ids) {
