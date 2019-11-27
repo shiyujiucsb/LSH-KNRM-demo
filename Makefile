@@ -8,7 +8,7 @@ TARGET   = KNRM_main
 
 all: $(TARGET)
 
-KNRM_main: $(OBJECTS) KNRM.h
+KNRM_main: $(OBJECTS)
 	$(CXX) -o $@ $(OBJECTS) $(LDFLAGS)
 
 KNRM.o: KNRM.cpp KNRM.h
