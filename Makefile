@@ -2,20 +2,20 @@ CXX      = g++
 LDFLAGS  = 
 CXXFLAGS = -w -O3 -std=c++11 -funroll-loops
 
-OBJECTS  = KNRM.o KNRM_main.o
+OBJECTS  = LSH_KNRM.o LSH_KNRM_main.o
 
-TARGET   = KNRM_main
+TARGET   = LSH_KNRM_main
 
 all: $(TARGET)
 
-KNRM_main: $(OBJECTS)
+LSH_KNRM_main: $(OBJECTS)
 	$(CXX) -o $@ $(OBJECTS) $(LDFLAGS)
 
-KNRM.o: KNRM.cpp KNRM.h
-	$(CXX) $(CXXFLAGS) -c KNRM.cpp
+LSH_KNRM.o: LSH_KNRM.cpp LSH_KNRM.h
+	$(CXX) $(CXXFLAGS) -c LSH_KNRM.cpp
 
-KNRM_main.o: KNRM_main.cpp
-	$(CXX) $(CXXFLAGS) -c KNRM_main.cpp
+LSH_KNRM_main.o: LSH_KNRM_main.cpp
+	$(CXX) $(CXXFLAGS) -c LSH_KNRM_main.cpp
 
 clean:
 	rm  *.o $(TARGET)

@@ -1,4 +1,4 @@
-#include "KNRM.h"
+#include "LSH_KNRM.h"
 
 int main() {
 

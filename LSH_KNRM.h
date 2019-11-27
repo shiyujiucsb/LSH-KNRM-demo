@@ -2,8 +2,8 @@
  * Demo: Use LSH to speed up the evaluation of KNRM ranking model.
  */
 
-#ifndef _KNRM_H
-#define _KNRM_H
+#ifndef _LSH_KNRM_H
+#define _LSH_KNRM_H
 
 #include <bitset>
 #include <random>
