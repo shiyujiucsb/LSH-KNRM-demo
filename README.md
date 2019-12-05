@@ -1,15 +1,19 @@
 
 # Introduction
 This demo shows the speed-up of Kernel-pooling Neural Ranking Model (KNRM) using Locality Sensitive Hashing (LSH). 
+
 It contains two baselines: 1. The original KNRM model. 2. The LSH-based KNRM model for speed up.
+
 The time cost is computing the ranking score for one document and one query.
 All the data (query and document content, vocabulary embeddings) and model (neural network parameters) are randomly generated on the fly.
+
 By default, the number of LSH buckets is 256. The dimension of word embedding is 300. The KNRM model has 30 kernels. The query length is 3-word. The document length is 10000-word. The vocabulary size is 100K. Please check ``LSH_KNRM.h`` for these parameters.
 
 # How to build
 ``
 $ make
 ``
+
 The build options are in ``Makefile``.
 
 # How to run and test
