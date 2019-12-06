@@ -10,23 +10,23 @@ All the data (query and document content, vocabulary embeddings) and model (neur
 By default, the number of LSH buckets is 256. The dimension of word embedding is 300. The KNRM model has 30 kernels. The query length is 3-word. The document length is 10000-word. The vocabulary size is 100K. Please check ``LSH_KNRM.h`` for these parameters.
 
 # How to build
-``
+```
 $ make
-``
+```
 
 The build options are in ``Makefile``.
 
 # How to run and test
-``
+```
 $ ./LSH_KNRM_main
-``
+```
 
 # Output sample
-``
+```
 $ ./LSH_KNRM_main
 Original time cost in ms: 51.826
 LSH time cost in ms: 2.43
-``
+```
 
 # Notes
 * Need C++ 11.
