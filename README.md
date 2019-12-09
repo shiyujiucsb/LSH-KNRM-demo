@@ -29,9 +29,8 @@ LSH time cost in ms: 2.43
 ```
 
 # Notes
-* Need C++ 11.
 
-* Reference:
+* Reference for LSH speed-up:
 
 @inproceedings{Ji:2019:EIN:3308558.3313576,
 
@@ -64,5 +63,13 @@ LSH time cost in ms: 2.43
 
  address = {New York, NY, USA},
 } 
+
+* KNRM Reference:
+
+Xiong C, Dai Z, Callan J, Liu Z, Power R. End-to-end neural ad-hoc ranking with kernel pooling. InProceedings of the 40th International ACM SIGIR conference on research and development in information retrieval 2017 Aug 7 (pp. 55-64). ACM.
+
+* CONV-KNRM Reference:
+
+Dai Z, Xiong C, Callan J, Liu Z. Convolutional neural networks for soft-matching n-grams in ad-hoc search. InProceedings of the eleventh ACM international conference on web search and data mining 2018 Feb 2 (pp. 126-134). ACM.
 
 * Code Reference: https://github.com/faneshion/DRMM
