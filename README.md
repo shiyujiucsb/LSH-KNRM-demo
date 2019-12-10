@@ -26,8 +26,8 @@ $ ./LSH_KNRM_main
 # Output sample
 ```
 $ ./LSH_KNRM_main
-Original time cost per document in ms: 4.832
-LSH time cost per document in ms: 0.589
+Original time cost per document in ms: 2.539
+LSH time cost per document in ms: 0.195
 ```
 
 # Notes
