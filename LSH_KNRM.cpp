@@ -1,3 +1,26 @@
+/*****************************************************************************
+Copyright (c) 2019 The Regents of the University of California. All Rights Reserved.
+
+Redistribution and use in source and binary forms, with or without modification
+are permitted, following the standand Apache license included in the directory
+
+
+Author: Shiyu Ji
+        Department of Computer Science
+        Unvieresity of California at Santa Barbara
+
+THIS CODE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR IMPLIED
+WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
+EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT
+OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY
+WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
+DAMAGE.
+*****************************************************************************/
+
 #include "LSH_KNRM.h"
 
 namespace nn4ir {
@@ -113,36 +136,24 @@ double ComputeRankingScore(const std::vector<VectorXd>& id2embedding_mm,
     }
   }
 
-  double weight_sum = 0.0;
-  VectorXd vQWeight = VectorXd::Zero(nQSize); //zi
-  for (a = 0 ; a < nQSize; ++a) {
-    double cqw = 2.0;
-    cqw = exp(vW2(0)); 
-    vQWeight(a) = cqw; 
-    weight_sum += vQWeight(a);
-  }
-
-  assert(weight_sum != 0);
-  vQWeight /= weight_sum;
-
   std::vector<VectorXd> vHi(vW1Size + 1);
   vHi[0].resize(vW1[0].rows());
   for (a = 1; a < vW1Size + 1; ++a) {
     vHi[a].resize(vW1[a-1].cols()); 
   }
+  vHi[0].setZero();
   for (a = 0; a < mm.rows(); ++a) {
-    vHi[0].setZero();
-    for (int b = 0 ; b < vHi[0].size(); ++ b) {
-      vHi[0](b) = log10(mm(a,b) + 1);
+    for (int b = 0; b < vHi[0].size(); ++b) {
+      vHi[0](b) += log10(mm(a,b) + 1);
     }
-    //feed forward
-    for (b = 1 ; b < vW1Size + 1; ++b) { 
-      vHi[b].setZero();
-      vHi[b] = vHi[b-1] * vW1[b-1] + vW3[b-1];
-      vHi[b] = Tanh(vHi[b]);
-    }
-    score += vHi[vW1Size](0) * vQWeight(a);
   }
+  //feed forward
+  for (b = 1; b < vW1Size + 1; ++b) { 
+    vHi[b].setZero();
+    vHi[b] = vHi[b-1] * vW1[b-1] + vW3[b-1];
+    vHi[b] = Tanh(vHi[b]);
+  }
+  score = vHi[vW1Size](0);
 
   const auto original_elapse = std::chrono::high_resolution_clock::now()
                                - original_start;
@@ -150,7 +161,7 @@ double ComputeRankingScore(const std::vector<VectorXd>& id2embedding_mm,
   const int64_t original_time =
       std::chrono::duration_cast<std::chrono::microseconds>(original_elapse)
       .count();
-  std::cout << "Original time cost in ms: "
+  std::cout << "Original time cost per document in ms: "
             << original_time / 1000.0 << std::endl;
 
   return score;
@@ -212,43 +223,32 @@ double ComputeRankingScoreFromLSH(const std::vector<LSHFingerprint>& id2lsh_mm,
     }
     mm.row(a) += lsh_matrix * hamming_count.transpose();
   }
-  double weight_sum = 0.0;
-  VectorXd vQWeight = VectorXd::Zero(nQSize); //zi
-  for (a = 0; a < nQSize; ++a) {
-    double cqw = 2.0;
-    cqw = exp(vW2(0)); 
-    vQWeight(a) = cqw; 
-    weight_sum += vQWeight(a);
-  }
-
-  assert(weight_sum != 0);
-  vQWeight /= weight_sum;
 
   std::vector<VectorXd> vHi(vW1Size + 1);
   vHi[0].resize(vW1[0].rows());
   for (a = 1; a < vW1Size + 1; ++a) {
     vHi[a].resize(vW1[a-1].cols()); 
   }
+  vHi[0].setZero();
   for (a = 0; a < mm.rows(); ++a) {
-    vHi[0].setZero();
-    for (int b = 0 ; b < vHi[0].size(); ++b) {
-      vHi[0](b) = log10(mm(a,b) + 1);
+    for (int b = 0; b < vHi[0].size(); ++b) {
+      vHi[0](b) += log10(mm(a,b) + 1);
     }
-    //feed forward
-    for (b = 1 ; b < vW1Size + 1; ++b) {
-      vHi[b].setZero();
-      vHi[b] = vHi[b-1] * vW1[b-1] + vW3[b-1];
-      vHi[b] = Tanh(vHi[b]);
-    }
-    score += vHi[vW1Size](0) * vQWeight(a);
   }
+  //feed forward
+  for (b = 1; b < vW1Size + 1; ++b) {
+    vHi[b].setZero();
+    vHi[b] = vHi[b-1] * vW1[b-1] + vW3[b-1];
+    vHi[b] = Tanh(vHi[b]);
+  }
+  score = vHi[vW1Size](0);
 
   const auto lsh_elapse = std::chrono::high_resolution_clock::now()
                           - lsh_start;
   const int64_t lsh_time =
       std::chrono::duration_cast<std::chrono::microseconds>(lsh_elapse)
       .count();
-  std::cout << "LSH time cost in ms: "
+  std::cout << "LSH time cost per document in ms: "
             << lsh_time / 1000.0 << std::endl;
 
   return score;
