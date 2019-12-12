@@ -34,7 +34,7 @@ LSH time cost per document in ms: 0.195
 
 * Reference for LSH speed-up:
 
-Ji S, Shao J, Yang T. Efficient Interaction-based Neural Ranking with Locality Sensitive Hashing. In The World Wide Web Conference 2019 May 13 (pp. 2858-2864). ACM.
+Ji S, Shao J, Yang T. Efficient Interaction-based Neural Ranking with Locality Sensitive Hashing. In Proceedings of International World Wide Web Conference (WWW 2019) (pp. 2858-2864). ACM.
 
 * KNRM Reference:
 
